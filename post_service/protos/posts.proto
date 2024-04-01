@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package posts;
+
+import "google/protobuf/timestamp.proto";
+
+service PostService {
+    rpc CreatePost (CreatePostRequest) returns (PostResponse);
+    rpc GetPost (GetPostRequest) returns (PostResponse);
+    rpc UpdatePost (UpdatePostRequest) returns (PostResponse);
+    rpc DeletePost (DeletePostRequest) returns (DeletePostResponse);
+    rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+}
+
+message Post {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    int64 author_id = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+    bool is_private = 7;
+    repeated string tags = 8;
+}
+
+// Запрос на создание поста
+message CreatePostRequest {
+    string title = 1;
+    string description = 2;
+    int64 author_id = 3; // ID пользователя из JWT токена
+    bool is_private = 4;
+    repeated string tags = 5;
+}
+
+// Запрос на получение поста по ID
+message GetPostRequest {
+    string id = 1;
+    int64 requester_id = 2; // ID пользователя, запрашивающего пост
+}
+
+// Запрос на обновление поста
+message UpdatePostRequest {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    bool is_private = 4;
+    repeated string tags = 5;
+    int64 requester_id = 6; // ID пользователя, обновляющего пост
+}
+
+// Запрос на удаление поста
+message DeletePostRequest {
+    string id = 1;
+    int64 requester_id = 2; // ID пользователя, удаляющего пост
+}
+
+// Ответ, содержащий один пост
+message PostResponse {
+    Post post = 1;
+}
+
+// Запрос на получение списка постов
+message ListPostsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+}
+
+// Ответ, содержащий список постов
+message ListPostsResponse {
+    repeated Post posts = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
+
+// Ответ для операции удаления
+message DeletePostResponse {
+    string message = 1;
+} 

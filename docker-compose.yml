@@ -1,35 +1,62 @@
 version: '3.8'
 services:
   api_gateway:
-    build: ./api_service
+    build:
+      context: .
+      dockerfile: ./api_service/Dockerfile
     ports:
       - "8000:8000"
-    restart: always  # Добавлено автоматическое перезапуск
+    restart: always 
     env_file:
       - ./api_service/.env
     depends_on:
-      - user_service
+      user_service:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   user_service:
-    build: ./user_service
+    build:
+      context: .
+      dockerfile: ./user_service/Dockerfile
     ports:
-      - "8001:8001"  # Добавлен порт для отладки
-    restart: always  # Добавлено автоматическое перезапуск
+      - "8001:8001"  
+    restart: always  
     env_file:
       - ./user_service/.env
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+
+  post_service:
+    build:
+      context: .
+      dockerfile: ./post_service/Dockerfile
+    ports:
+      - "50051:50051"
+    restart: always
+    env_file:
+      - ./post_service/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:13
     ports:
-      - "5432:5432" 
+      - "5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: users_db
+      POSTGRES_MULTIPLE_DBS: users_db,posts_db
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./init-multiple-db.sh:/docker-entrypoint-initdb.d/init-multiple-db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d users_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pg_data:

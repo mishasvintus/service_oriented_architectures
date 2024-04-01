@@ -1,11 +1,19 @@
 from fastapi import FastAPI
-from app.dependencies import init_db
-from app.routers import users_router
+from tortoise.contrib.fastapi import register_tortoise
+from .router import router
+from .config import DATABASE_URL
 
 app = FastAPI(title="User Service")
 
-init_db(app)
-app.include_router(users_router.router, tags=["users"])
+register_tortoise(
+    app,
+    db_url=DATABASE_URL,
+    modules={"models": ["app.models"]},
+    generate_schemas=True,
+    add_exception_handlers=True,
+)
+
+app.include_router(router, tags=["users"])
 
 if __name__ == "__main__":
     import uvicorn

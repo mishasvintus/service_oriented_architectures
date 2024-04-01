@@ -1,4 +1,24 @@
-from user_service.app.utils.security import hash_password, verify_password, create_access_token, decode_access_token
+from user_service.app.security import hash_password, verify_password, create_access_token, decode_access_token
+from datetime import timedelta
+
+def test_password_hashing():
+    password = "secret_password"
+    hashed = hash_password(password)
+    assert hashed != password
+    assert verify_password(password, hashed)
+
+def test_token_creation_and_decoding():
+    data = {"sub": "testuser"}
+    token = create_access_token(data)
+    decoded_payload = decode_access_token(token)
+    assert decoded_payload is not None
+    assert decoded_payload.get("sub") == data["sub"]
+
+def test_token_expiration():
+    data = {"sub": "testuser"}
+    token = create_access_token(data, expires_delta=timedelta(seconds=-1))
+    decoded_payload = decode_access_token(token)
+    assert decoded_payload is None
 
 def test_hash_password():
     password = "mysecurepassword"
