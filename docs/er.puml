@@ -1,0 +1,118 @@
+@startuml SocialNetworkER
+!theme plain
+
+package "User Service" #aliceblue {
+    entity "User" as U #lightblue {
+        * user_id : uuid
+        --
+        username : string
+        email : string
+        password_hash : string
+        created_at : datetime
+        updated_at : datetime
+    }
+
+    entity "UserProfile" as UP #lightblue {
+        * profile_id : uuid
+        --
+        user_id : uuid
+        full_name : string
+        bio : text
+        avatar_url : string
+        location : string
+        website : string
+    }
+
+    entity "Session" as US #lightblue {
+        * session_id : uuid
+        --
+        user_id : uuid
+        token : string
+        expires_at : datetime
+        created_at : datetime
+    }
+
+    U::user_id --> UP::user_id
+    U::user_id --> US::user_id
+}
+
+package "Post Service" #honeydew {
+    entity "Post" as P #lightgreen {
+        * post_id : uuid
+        --
+        user_id : uuid
+        content : text
+        created_at : datetime
+        updated_at : datetime
+        status : string
+    }
+
+    entity "Comment" as C #lightgreen {
+        * comment_id : uuid
+        --
+        post_id : uuid
+        user_id : uuid
+        content : text
+        created_at : datetime
+        parent_comment_id : uuid <<nullable>>
+    }
+
+    entity "Media" as M #lightgreen {
+        * media_id : uuid
+        --
+        post_id : uuid
+        url : string
+        type : string
+        description : text
+        created_at : datetime
+    }
+
+    P::post_id --> C::post_id
+    P::post_id --> M::post_id
+    C::parent_comment_id --> C::comment_id
+}
+
+package "Statistics Service" #lightyellow {
+    entity "LikeStat" as LS #yellow {
+        * like_id : uuid
+        --
+        post_id : uuid
+        user_id : uuid
+        created_at : datetime
+        reaction_type : string
+        source : string
+    }
+
+    entity "ViewStat" as VS #yellow {
+        * view_id : uuid
+        --
+        post_id : uuid
+        user_id : uuid
+        viewed_at : datetime
+        device_type : string
+        duration : integer
+    }
+
+    entity "CommentStat" as CS #yellow {
+        * stat_id : uuid
+        --
+        post_id : uuid
+        user_id : uuid
+        comment_id : uuid
+        created_at : datetime
+        edited_at : datetime
+    }
+
+    P::post_id --> LS::post_id
+    P::post_id --> VS::post_id
+    P::post_id --> CS::post_id
+    C::comment_id --> CS::comment_id
+}
+
+
+U::user_id --> P::user_id
+U::user_id --> C::user_id
+U::user_id --> LS::user_id
+U::user_id --> VS::user_id
+
+@enduml

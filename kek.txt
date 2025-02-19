@@ -1,0 +1,31 @@
+specification {
+  element actor
+  element system
+  element component
+}
+
+model {
+  customer = actor 'Пользователь' {
+    description 'Пользователь социальной сети'
+  }
+  social = system 'Социальная сеть' {
+    component GUI 'Графический интерфейс'
+    component API 'API Gateway' {
+      description 'Сервис API'
+    }
+
+    GUI -> API 'RestAPI'
+
+    customer -> GUI 'Взаимодействует в приложении'
+  }
+}
+
+views {
+  view index {
+    include *
+  }
+
+  view of social {
+    include *
+  }
+}

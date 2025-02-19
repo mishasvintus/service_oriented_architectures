@@ -1,0 +1,115 @@
+specification {
+  element person {
+      style {
+          shape person
+          color green
+      }
+  }
+  element softwareSystem
+  element container
+  element component
+}
+
+model {
+  user = person "Пользователь" "Пользователь социальной сети"
+
+  social_network = softwareSystem "Социальная сеть" {
+    api_gateway = container "API Gateway" {
+      description "Маршрутизация запросов и управление доступом"
+      technology "Python, FastAPI"
+    }
+
+    user_service = container "User Service" {
+      description "Управление пользователями и аутентификация"
+      technology "Django, PostgreSQL"
+    }
+
+    post_service = container "Post Service" {
+      description "Управление постами и комментариями"
+      technology "Node.js, PostgreSQL"
+    }
+
+    stats_service = container "Statistics Service" {
+      description "Подсчет лайков, просмотров, комментариев и предоставление API для статистики"
+      technology "Go, ClickHouse"
+    }
+
+    message_broker = container "Kafka" {
+      description "Брокер сообщений для событий статистики"
+      technology "Apache Kafka"
+      style {
+        shape queue
+      }
+    }
+
+    user_db = container "PostgreSQL" {
+      description "База данных пользователей"
+      technology "Database"
+      style {
+        shape cylinder
+      }
+    }
+
+    post_db = container "PostgreSQL" {
+      description "База данных постов и комментариев"
+      technology "Database"
+      style {
+        shape cylinder
+      }
+    }
+
+    stats_db = container "ClickHouse" {
+      description "База данных статистики"
+      technology "Database"
+      style {
+        shape cylinder
+      }
+    }
+  }
+
+  user -> social_network.api_gateway "Использует" {
+    technology "HTTPS"
+  }
+  
+  social_network.api_gateway -> social_network.user_service "Маршрутизирует" {
+    technology "JSON/HTTPS"
+  }
+  
+  social_network.api_gateway -> social_network.post_service "Маршрутизирует" {
+    technology "JSON/HTTPS"
+  }
+  
+  social_network.api_gateway -> social_network.stats_service "Запрашивает статистику через API" {
+    technology "JSON/HTTPS"
+  }
+  
+  social_network.user_service -> social_network.user_db "Читает/Пишет" {
+    technology "SQL"
+  }
+  
+  social_network.post_service -> social_network.post_db "Читает/Пишет" {
+    technology "SQL"
+  }
+  
+  social_network.stats_service -> social_network.stats_db "Читает/Пишет" {
+    technology "SQL"
+  }
+  
+  social_network.post_service -> social_network.message_broker "Публикует события (лайки, комментарии, просмотры)" {
+    technology "Kafka"
+  }
+  
+  social_network.message_broker -> social_network.stats_service "Передает события статистики" {
+    technology "Kafka"
+  }
+}
+
+views {
+  view index {
+    include *
+  }
+  
+  view socialNetwork {
+    include *
+  }
+}
