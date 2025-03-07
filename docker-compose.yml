@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  api_gateway:
+    build: ./api_gateway
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./api_service/.env
+    depends_on:
+      - user_service
+
+  user_service:
+    build: ./user_service
+    env_file:
+      - ./user_service/.env
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
