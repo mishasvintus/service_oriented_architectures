@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from user_service.app.dependencies import init_db
-from user_service.app.routers import users_router
+from app.dependencies import init_db
+from app.routers import users_router
 
 app = FastAPI(title="User Service")
 

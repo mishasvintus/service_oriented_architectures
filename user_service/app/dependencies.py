@@ -1,9 +1,9 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from tortoise.contrib.fastapi import register_tortoise
-from user_service.app.core.config import DATABASE_URL
-from user_service.app.models.user import User
-from user_service.app.utils.security import decode_access_token
+from app.core.config import DATABASE_URL
+from app.models.user import User
+from app.utils.security import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
@@ -22,7 +22,7 @@ def init_db(app):
     register_tortoise(
         app,
         db_url=DATABASE_URL,
-        modules={"models": ["user_service.app.models.user"]},
+        modules={"models": ["app.models.user"]},
         generate_schemas=True,
         add_exception_handlers=True,
     )
