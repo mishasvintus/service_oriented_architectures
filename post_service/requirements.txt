@@ -3,4 +3,5 @@ grpcio-tools
 tortoise-orm
 asyncpg
 python-dotenv
-protobuf 
+protobuf
+kafka-python 

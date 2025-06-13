@@ -10,6 +10,13 @@ service PostService {
     rpc UpdatePost (UpdatePostRequest) returns (PostResponse);
     rpc DeletePost (DeletePostRequest) returns (DeletePostResponse);
     rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+    
+    // Новые методы для задания
+    rpc ViewPost (ViewPostRequest) returns (ViewPostResponse);
+    rpc LikePost (LikePostRequest) returns (LikePostResponse);
+    rpc UnlikePost (UnlikePostRequest) returns (UnlikePostResponse);
+    rpc CommentPost (CommentPostRequest) returns (CommentPostResponse);
+    rpc GetPostComments (GetPostCommentsRequest) returns (GetPostCommentsResponse);
 }
 
 message Post {
@@ -76,4 +83,77 @@ message ListPostsResponse {
 // Ответ для операции удаления
 message DeletePostResponse {
     string message = 1;
+}
+
+// Новые сообщения для задания
+
+// Просмотр поста
+message ViewPostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message ViewPostResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Лайк поста
+message LikePostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message LikePostResponse {
+    bool success = 1;
+    string message = 2;
+    int32 total_likes = 3;
+}
+
+// Убрать лайк
+message UnlikePostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message UnlikePostResponse {
+    bool success = 1;
+    string message = 2;
+    int32 total_likes = 3;
+}
+
+// Комментарий к посту
+message CommentPostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+    string content = 3;
+}
+
+message PostComment {
+    int32 id = 1;
+    string post_id = 2;
+    int64 user_id = 3;
+    string content = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}
+
+message CommentPostResponse {
+    bool success = 1;
+    string message = 2;
+    PostComment comment = 3;
+}
+
+// Получение комментариев к посту
+message GetPostCommentsRequest {
+    string post_id = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}
+
+message GetPostCommentsResponse {
+    repeated PostComment comments = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
 } 

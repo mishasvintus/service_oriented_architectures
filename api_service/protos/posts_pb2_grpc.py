@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from . import posts_pb2 as posts__pb2
+from api_service.protos import posts_pb2 as posts__pb2
 
 GRPC_GENERATED_VERSION = '1.73.0'
 GRPC_VERSION = grpc.__version__
@@ -59,6 +59,31 @@ class PostServiceStub(object):
                 request_serializer=posts__pb2.ListPostsRequest.SerializeToString,
                 response_deserializer=posts__pb2.ListPostsResponse.FromString,
                 _registered_method=True)
+        self.ViewPost = channel.unary_unary(
+                '/posts.PostService/ViewPost',
+                request_serializer=posts__pb2.ViewPostRequest.SerializeToString,
+                response_deserializer=posts__pb2.ViewPostResponse.FromString,
+                _registered_method=True)
+        self.LikePost = channel.unary_unary(
+                '/posts.PostService/LikePost',
+                request_serializer=posts__pb2.LikePostRequest.SerializeToString,
+                response_deserializer=posts__pb2.LikePostResponse.FromString,
+                _registered_method=True)
+        self.UnlikePost = channel.unary_unary(
+                '/posts.PostService/UnlikePost',
+                request_serializer=posts__pb2.UnlikePostRequest.SerializeToString,
+                response_deserializer=posts__pb2.UnlikePostResponse.FromString,
+                _registered_method=True)
+        self.CommentPost = channel.unary_unary(
+                '/posts.PostService/CommentPost',
+                request_serializer=posts__pb2.CommentPostRequest.SerializeToString,
+                response_deserializer=posts__pb2.CommentPostResponse.FromString,
+                _registered_method=True)
+        self.GetPostComments = channel.unary_unary(
+                '/posts.PostService/GetPostComments',
+                request_serializer=posts__pb2.GetPostCommentsRequest.SerializeToString,
+                response_deserializer=posts__pb2.GetPostCommentsResponse.FromString,
+                _registered_method=True)
 
 
 class PostServiceServicer(object):
@@ -94,6 +119,37 @@ class PostServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ViewPost(self, request, context):
+        """Новые методы для задания
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def LikePost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UnlikePost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CommentPost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetPostComments(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PostServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -121,6 +177,31 @@ def add_PostServiceServicer_to_server(servicer, server):
                     servicer.ListPosts,
                     request_deserializer=posts__pb2.ListPostsRequest.FromString,
                     response_serializer=posts__pb2.ListPostsResponse.SerializeToString,
+            ),
+            'ViewPost': grpc.unary_unary_rpc_method_handler(
+                    servicer.ViewPost,
+                    request_deserializer=posts__pb2.ViewPostRequest.FromString,
+                    response_serializer=posts__pb2.ViewPostResponse.SerializeToString,
+            ),
+            'LikePost': grpc.unary_unary_rpc_method_handler(
+                    servicer.LikePost,
+                    request_deserializer=posts__pb2.LikePostRequest.FromString,
+                    response_serializer=posts__pb2.LikePostResponse.SerializeToString,
+            ),
+            'UnlikePost': grpc.unary_unary_rpc_method_handler(
+                    servicer.UnlikePost,
+                    request_deserializer=posts__pb2.UnlikePostRequest.FromString,
+                    response_serializer=posts__pb2.UnlikePostResponse.SerializeToString,
+            ),
+            'CommentPost': grpc.unary_unary_rpc_method_handler(
+                    servicer.CommentPost,
+                    request_deserializer=posts__pb2.CommentPostRequest.FromString,
+                    response_serializer=posts__pb2.CommentPostResponse.SerializeToString,
+            ),
+            'GetPostComments': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPostComments,
+                    request_deserializer=posts__pb2.GetPostCommentsRequest.FromString,
+                    response_serializer=posts__pb2.GetPostCommentsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -258,6 +339,141 @@ class PostService(object):
             '/posts.PostService/ListPosts',
             posts__pb2.ListPostsRequest.SerializeToString,
             posts__pb2.ListPostsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ViewPost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/posts.PostService/ViewPost',
+            posts__pb2.ViewPostRequest.SerializeToString,
+            posts__pb2.ViewPostResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def LikePost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/posts.PostService/LikePost',
+            posts__pb2.LikePostRequest.SerializeToString,
+            posts__pb2.LikePostResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UnlikePost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/posts.PostService/UnlikePost',
+            posts__pb2.UnlikePostRequest.SerializeToString,
+            posts__pb2.UnlikePostResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CommentPost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/posts.PostService/CommentPost',
+            posts__pb2.CommentPostRequest.SerializeToString,
+            posts__pb2.CommentPostResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetPostComments(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/posts.PostService/GetPostComments',
+            posts__pb2.GetPostCommentsRequest.SerializeToString,
+            posts__pb2.GetPostCommentsResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -5,10 +5,10 @@ from .schemas import UserCreate, UserOut, UserUpdate
 from .models import User
 from .security import hash_password, verify_password, create_access_token, decode_access_token
 from .config import ACCESS_TOKEN_EXPIRE_MINUTES
+from .kafka_producer import kafka_producer
 
 router = APIRouter(prefix="/users")
 
-# --- Зависимости ---
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -35,6 +35,9 @@ async def register(user: UserCreate):
         email=user.email,
         password_hash=hashed_pass
     )
+    
+    kafka_producer.send_user_registration_event(user_obj.id, user_obj.created_at)
+    
     return user_obj
 
 @router.post("/login")

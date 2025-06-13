@@ -1,0 +1,291 @@
+openapi: 3.1.0
+info:
+  title: User Service
+  version: 0.1.0
+paths:
+  /users/register:
+    post:
+      tags:
+      - users
+      summary: Register
+      operationId: register_users_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/login:
+    post:
+      tags:
+      - users
+      summary: Login
+      operationId: login_users_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_login_users_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/profile:
+    get:
+      tags:
+      - users
+      summary: Get Profile
+      operationId: get_profile_users_profile_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+      security:
+      - OAuth2PasswordBearer: []
+    put:
+      tags:
+      - users
+      summary: Update Profile
+      operationId: update_profile_users_profile_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+    delete:
+      tags:
+      - users
+      summary: Delete Profile
+      operationId: delete_profile_users_profile_delete
+      responses:
+        '204':
+          description: Successful Response
+      security:
+      - OAuth2PasswordBearer: []
+components:
+  schemas:
+    Body_login_users_login_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: ^password$
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_login_users_login_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    UserCreate:
+      properties:
+        login:
+          type: string
+          maxLength: 50
+          minLength: 3
+          title: Login
+        email:
+          type: string
+          format: email
+          title: Email
+        password:
+          type: string
+          minLength: 6
+          title: Password
+      type: object
+      required:
+      - login
+      - email
+      - password
+      title: UserCreate
+    UserOut:
+      properties:
+        id:
+          type: integer
+          maximum: 2147483647.0
+          minimum: -2147483648.0
+          title: Id
+        login:
+          type: string
+          maxLength: 50
+          title: Login
+        email:
+          type: string
+          maxLength: 255
+          title: Email
+        first_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: First Name
+          nullable: true
+        last_name:
+          anyOf:
+          - type: string
+            maxLength: 50
+          - type: 'null'
+          title: Last Name
+          nullable: true
+        date_of_birth:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Date Of Birth
+          nullable: true
+        phone:
+          anyOf:
+          - type: string
+            maxLength: 20
+          - type: 'null'
+          title: Phone
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          readOnly: true
+      additionalProperties: false
+      type: object
+      required:
+      - id
+      - login
+      - email
+      - created_at
+      - updated_at
+      title: UserOut
+    UserUpdate:
+      properties:
+        first_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        date_of_birth:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Date Of Birth
+        email:
+          anyOf:
+          - type: string
+            format: email
+          - type: 'null'
+          title: Email
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+      type: object
+      title: UserUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: /users/login

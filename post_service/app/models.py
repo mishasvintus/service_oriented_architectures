@@ -15,4 +15,38 @@ class Post(models.Model):
         table = "posts"
 
     def __str__(self):
-        return self.title 
+        return self.title
+
+
+class PostView(models.Model):
+    id = fields.IntField(primary_key=True)
+    post_id = fields.UUIDField()
+    user_id = fields.IntField()
+    viewed_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "post_views"
+        unique_together = (("post_id", "user_id"),)
+
+
+class PostLike(models.Model):
+    id = fields.IntField(primary_key=True)
+    post_id = fields.UUIDField()
+    user_id = fields.IntField()
+    liked_at = fields.DatetimeField(auto_now_add=True)
+
+    class Meta:
+        table = "post_likes"
+        unique_together = (("post_id", "user_id"),)
+
+
+class PostComment(models.Model):
+    id = fields.IntField(primary_key=True)
+    post_id = fields.UUIDField()
+    user_id = fields.IntField()
+    content = fields.TextField()
+    created_at = fields.DatetimeField(auto_now_add=True)
+    updated_at = fields.DatetimeField(auto_now=True)
+
+    class Meta:
+        table = "post_comments" 

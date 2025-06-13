@@ -6,5 +6,9 @@ load_dotenv()
 
 app = FastAPI(title="API Gateway")
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
 app.include_router(posts_router.router)
 app.include_router(user_proxy_router.router)

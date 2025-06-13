@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from post_service.protos import posts_pb2 as posts__pb2
+import posts_pb2 as posts__pb2
 
 GRPC_GENERATED_VERSION = '1.73.0'
 GRPC_VERSION = grpc.__version__
