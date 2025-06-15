@@ -65,16 +65,46 @@ package "Post Service Database" #honeydew {
     P::id --> V::post_id
 }
 
+package "Statistics Service Database (ClickHouse)" #lavender {
+    entity "post_events" as PE #plum {
+        * event_id : string
+        --
+        post_id : string
+        user_id : integer
+        event_type : string
+        event_data : json
+        timestamp : datetime
+        date : date
+    }
+
+    entity "user_events" as UE #plum {
+        * event_id : string
+        --
+        user_id : integer
+        event_type : string
+        event_data : json
+        timestamp : datetime
+        date : date
+    }
+}
+
 ' Cross-service relationships (logical, not enforced by FK)
 U::id ..> P::author_id : "создает посты"
 U::id ..> C::user_id : "пишет комментарии"
 U::id ..> L::user_id : "ставит лайки"
 U::id ..> V::user_id : "просматривает посты"
 
+' Analytics relationships (events flow)
+P::id ..> PE::post_id : "события постов"
+U::id ..> PE::user_id : "пользователь в событиях"
+U::id ..> UE::user_id : "события пользователей"
+
 note right of U : "Tortoise ORM модель\nс базовой информацией\nо пользователе"
 note right of P : "Tortoise ORM модель\nс UUID первичным ключом"
 note right of C : "Комментарии к постам\n(без вложенности)"
 note right of L : "Лайки с ограничением\nуникальности"
 note right of V : "Просмотры постов\nдля аналитики"
+note right of PE : "ClickHouse таблица\nдля событий постов\n(просмотры, лайки, комментарии)"
+note right of UE : "ClickHouse таблица\nдля событий пользователей\n(регистрации, активность)"
 
 @enduml

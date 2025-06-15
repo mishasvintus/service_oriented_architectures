@@ -19,6 +19,11 @@
 - Проверяют отправку и получение событий
 - Требуют запущенный Kafka
 
+### 4. End-to-End тесты
+- Полные сценарии от начала до конца
+- Тестируют весь поток: Регистрация → Посты → Kafka → Statistics → API
+- Требуют все запущенные сервисы
+
 ## 🚀 Запуск тестов
 
 ### Предварительные требования
@@ -70,6 +75,15 @@ scripts/run_tests.sh kafka
 python3 -m pytest tests/test_kafka_integration.py -v
 ```
 
+#### Только End-to-End тесты
+```bash
+scripts/run_tests.sh e2e
+# или
+python3 scripts/testing/run_tests.py e2e
+# или
+python3 -m pytest tests/test_full_e2e_flow.py -v
+```
+
 ## 📁 Структура тестов
 
 ```
@@ -102,8 +116,17 @@ python3 -m pytest tests/test_kafka_integration.py -v
 │   └── integrational_tests/             # 🔗 Интеграционные тесты
 │       └── test_integration.py          # REST API интеграция
 │
+├── statistics_service/
+│   ├── unit_tests/                      # 🧪 Unit тесты
+│   │   ├── test_clickhouse_client.py    # ClickHouse клиент (мок)
+│   │   ├── test_kafka_consumer.py       # Kafka consumer (мок)
+│   │   └── test_servicer.py             # gRPC сервис (мок)
+│   └── integrational_tests/             # 🔗 Интеграционные тесты
+│       └── test_integration.py          # gRPC + REST API интеграция
+│
 ├── tests/                               # 🌐 End-to-End тесты
-│   └── test_kafka_integration.py        # Kafka события (реальные)
+│   ├── test_kafka_integration.py        # Kafka события (реальные)
+│   └── test_full_e2e_flow.py            # Полный E2E тест социальной сети
 │
 ├── run_tests.sh                         # 🚀 Удобный запуск из корня
 └── TESTING.md                           # 📖 Эта документация
@@ -140,8 +163,16 @@ python3 -m pytest tests/test_kafka_integration.py -v
 ### API Gateway
 - ✅ Проксирование запросов к микросервисам
 - ✅ Новые REST endpoints
+- ✅ Statistics API endpoints
 - ✅ Обработка ошибок
 - ✅ Авторизация
+
+### Statistics Service
+- ✅ ClickHouse интеграция для аналитики
+- ✅ Kafka consumer для обработки событий
+- ✅ gRPC API для получения статистики
+- ✅ REST API через API Gateway
+- ✅ Агрегация данных по постам и пользователям
 
 ### Kafka Events
 - ✅ События регистрации пользователей
@@ -158,6 +189,14 @@ python3 -m pytest tests/test_kafka_integration.py -v
 - ✅ DELETE `/api/posts/{post_id}/like` - убрать лайк
 - ✅ POST `/api/posts/{post_id}/comments` - добавить комментарий
 - ✅ GET `/api/posts/{post_id}/comments` - получить комментарии с пагинацией
+
+### Statistics API endpoints
+- ✅ GET `/api/posts/{post_id}/stats` - статистика поста
+- ✅ GET `/api/posts/{post_id}/dynamics/views` - динамика просмотров
+- ✅ GET `/api/posts/{post_id}/dynamics/likes` - динамика лайков
+- ✅ GET `/api/posts/{post_id}/dynamics/comments` - динамика комментариев
+- ✅ GET `/api/statistics/posts/top` - топ постов по метрике
+- ✅ GET `/api/statistics/users/top` - топ пользователей по метрике
 
 ### Kafka топики
 - ✅ `user-registrations` - регистрации пользователей

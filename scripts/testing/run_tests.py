@@ -2,6 +2,12 @@
 """
 Скрипт для запуска тестов микросервисной архитектуры
 Использование: python3 run_tests.py [unit|integration|kafka|all]
+
+Типы тестов:
+- unit: Unit тесты всех сервисов (user_service, post_service, api_service, statistics_service)
+- integration: Интеграционные тесты всех сервисов
+- kafka: Kafka интеграционные тесты
+- all: Все тесты (по умолчанию)
 """
 
 import sys
@@ -9,11 +15,12 @@ import subprocess
 import os
 import time
 import requests
+import socket
 from pathlib import Path
 
 
 def check_service(url, name):
-    """Проверяет доступность сервиса"""
+    """Проверяет доступность HTTP сервиса"""
     try:
         response = requests.get(url, timeout=5)
         if response.status_code == 200:
@@ -25,19 +32,50 @@ def check_service(url, name):
     return False
 
 
+def check_grpc_service(host, port, name):
+    """Проверяет доступность gRPC сервиса"""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        if result == 0:
+            print(f"✅ {name} доступен на {host}:{port}")
+            return True
+    except:
+        pass
+    print(f"❌ {name} недоступен на {host}:{port}")
+    return False
+
+
 def check_services():
     """Проверяет доступность всех сервисов"""
     print("🔍 Проверка доступности сервисов...")
     
-    services = [
+    # HTTP сервисы
+    http_services = [
         ("http://localhost:8000/health", "API Gateway"),
         ("http://localhost:8001/docs", "User Service"),
-        ("http://localhost:8080", "Kafka UI")
+        ("http://localhost:8080", "Kafka UI"),
+        ("http://localhost:8123", "ClickHouse HTTP"),
+    ]
+    
+    # gRPC сервисы
+    grpc_services = [
+        ("localhost", 50051, "Post Service (gRPC)"),
+        ("localhost", 50053, "Statistics Service (gRPC)"),
     ]
     
     all_available = True
-    for url, name in services:
+    
+    # Проверяем HTTP сервисы
+    for url, name in http_services:
         if not check_service(url, name):
+            all_available = False
+    
+    # Проверяем gRPC сервисы
+    for host, port, name in grpc_services:
+        if not check_grpc_service(host, port, name):
             all_available = False
     
     if not all_available:
@@ -131,6 +169,7 @@ def run_integration_tests():
     return all_passed
 
 
+
 def run_kafka_tests():
     """Запускает Kafka тесты"""
     print("🧪 Запуск Kafka интеграционных тестов...")
@@ -153,6 +192,28 @@ def run_kafka_tests():
         return False
 
 
+def run_e2e_tests():
+    """Запускает полные end-to-end тесты"""
+    print("🧪 Запуск полных End-to-End тестов...")
+    print("=" * 40)
+    
+    if not check_services():
+        return False
+    
+    print("\n🔧 Полный E2E тест социальной сети...")
+    success, stdout, stderr = run_command(
+        "python3 -m pytest tests/test_full_e2e_flow.py -v --tb=short -s"
+    )
+    
+    if success:
+        print("✅ E2E тесты прошли")
+        return True
+    else:
+        print("❌ E2E тесты провалились:")
+        print(stderr)
+        return False
+
+
 def main():
     """Главная функция"""
     # Переходим в корень проекта (на 2 уровня вверх от scripts/testing/)
@@ -164,6 +225,12 @@ def main():
         test_type = "all"
     else:
         test_type = sys.argv[1].lower()
+    
+    valid_types = ["unit", "integration", "kafka", "e2e", "all"]
+    if test_type not in valid_types:
+        print(f"❌ Неверный тип тестов: {test_type}")
+        print(f"Доступные типы: {', '.join(valid_types)}")
+        sys.exit(1)
     
     print("🚀 Запуск тестов микросервисной архитектуры")
     print("=" * 50)
@@ -184,6 +251,10 @@ def main():
     
     if test_type in ["kafka", "all"]:
         results["kafka"] = run_kafka_tests()
+        print()
+    
+    if test_type in ["e2e", "all"]:
+        results["e2e"] = run_e2e_tests()
         print()
     
     print("🎉 Сводка результатов:")

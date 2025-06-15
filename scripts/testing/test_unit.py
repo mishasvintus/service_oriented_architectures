@@ -34,7 +34,7 @@ def main():
         print("Установите зависимости: pip install -r requirements-test.txt")
         sys.exit(1)
     
-    services = ["user_service", "post_service", "api_service"]
+    services = ["user_service", "post_service", "api_service", "statistics_service"]
     all_passed = True
     
     for service in services:

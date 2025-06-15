@@ -29,7 +29,8 @@ def check_services():
     services = [
         ("http://localhost:8000/health", "API Gateway"),
         ("http://localhost:8001/docs", "User Service"),
-        ("http://localhost:8080", "Kafka UI")
+        ("http://localhost:8080", "Kafka UI"),
+        ("http://localhost:8123", "ClickHouse HTTP"),
     ]
     
     all_available = True
@@ -75,14 +76,14 @@ def main():
         print("Установите зависимости: pip install -r requirements-test.txt")
         sys.exit(1)
     
-    services = ["user_service", "post_service", "api_service"]
+    services = ["user_service", "post_service", "api_service", "statistics_service"]
     all_passed = True
     
     for service in services:
         print(f"\n🔧 Интеграционные тесты {service}...")
+        # Запускаем все тесты из корня проекта для единообразия
         success, stdout, stderr = run_command(
-            "python3 -m pytest integrational_tests/ -v --tb=short", 
-            cwd=service
+            f"python3 -m pytest {service}/integrational_tests/ -v --tb=short"
         )
         
         if success:

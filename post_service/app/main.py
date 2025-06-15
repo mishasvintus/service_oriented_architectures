@@ -6,6 +6,16 @@ from post_service.app.config import DATABASE_URL
 from post_service.protos import posts_pb2_grpc
 from post_service.app.servicer import PostService
 
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Включаем логирование для Kafka
+logging.getLogger('kafka').setLevel(logging.INFO)
+logging.getLogger('post_service.app.kafka_producer').setLevel(logging.INFO)
+
 async def init_db():
     await Tortoise.init(
         db_url=DATABASE_URL,
@@ -14,7 +24,6 @@ async def init_db():
     await Tortoise.generate_schemas()
 
 async def grpc_server():
-    logging.basicConfig(level=logging.INFO)
     await init_db()
     
     server = grpc.aio.server()
@@ -25,5 +34,5 @@ async def grpc_server():
     await server.start()
     await server.wait_for_termination()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(grpc_server()) 

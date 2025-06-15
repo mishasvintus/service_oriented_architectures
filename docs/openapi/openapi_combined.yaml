@@ -17,6 +17,243 @@ paths:
           content:
             application/json:
               schema: {}
+  /api/posts/{post_id}/stats:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Stats
+      description: Получение базовой статистики по посту
+      operationId: get_post_stats_api_posts__post_id__stats_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostStatsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/views:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Views Dynamics
+      description: Получение динамики просмотров по посту
+      operationId: get_post_views_dynamics_api_posts__post_id__dynamics_views_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/likes:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Likes Dynamics
+      description: Получение динамики лайков по посту
+      operationId: get_post_likes_dynamics_api_posts__post_id__dynamics_likes_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/comments:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Comments Dynamics
+      description: Получение динамики комментариев по посту
+      operationId: get_post_comments_dynamics_api_posts__post_id__dynamics_comments_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/statistics/posts/top:
+    get:
+      tags:
+      - statistics
+      summary: Get Top Posts
+      description: Получение топ постов по метрике
+      operationId: get_top_posts_api_statistics_posts_top_get
+      parameters:
+      - name: metric
+        in: query
+        required: true
+        schema:
+          enum:
+          - views
+          - likes
+          - comments
+          type: string
+          description: Метрика для топа
+          title: Metric
+        description: Метрика для топа
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          description: Количество постов в топе
+          default: 10
+          title: Limit
+        description: Количество постов в топе
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopPostsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/statistics/users/top:
+    get:
+      tags:
+      - statistics
+      summary: Get Top Users
+      description: Получение топ пользователей по метрике
+      operationId: get_top_users_api_statistics_users_top_get
+      parameters:
+      - name: metric
+        in: query
+        required: true
+        schema:
+          enum:
+          - views
+          - likes
+          - comments
+          type: string
+          description: Метрика для топа
+          title: Metric
+        description: Метрика для топа
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          description: Количество пользователей в топе
+          default: 10
+          title: Limit
+        description: Количество пользователей в топе
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUsersResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/posts:
     post:
       tags:
@@ -426,6 +663,20 @@ components:
       - success
       - message
       title: CommentResponse
+    DynamicsPointResponse:
+      properties:
+        date:
+          type: string
+          title: Date
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - date
+      - count
+      title: DynamicsPointResponse
+      description: Точка данных для динамики
     HTTPValidationError:
       properties:
         detail:
@@ -523,6 +774,26 @@ components:
       - title
       - description
       title: PostCreate
+    PostDynamicsResponse:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+        metric:
+          type: string
+          title: Metric
+        dynamics:
+          items:
+            $ref: '#/components/schemas/DynamicsPointResponse'
+          type: array
+          title: Dynamics
+      type: object
+      required:
+      - post_id
+      - metric
+      - dynamics
+      title: PostDynamicsResponse
+      description: Ответ с динамикой по посту
     PostOut:
       properties:
         id:
@@ -564,6 +835,28 @@ components:
       - is_private
       - tags
       title: PostOut
+    PostStatsResponse:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+        views_count:
+          type: integer
+          title: Views Count
+        likes_count:
+          type: integer
+          title: Likes Count
+        comments_count:
+          type: integer
+          title: Comments Count
+      type: object
+      required:
+      - post_id
+      - views_count
+      - likes_count
+      - comments_count
+      title: PostStatsResponse
+      description: Ответ с базовой статистикой по посту
     PostUpdate:
       properties:
         title:
@@ -590,6 +883,71 @@ components:
           title: Tags
       type: object
       title: PostUpdate
+    TopPostResponse:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+        count:
+          type: integer
+          title: Count
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+      type: object
+      required:
+      - post_id
+      - count
+      title: TopPostResponse
+      description: Элемент топ поста
+    TopPostsResponse:
+      properties:
+        metric:
+          type: string
+          title: Metric
+        posts:
+          items:
+            $ref: '#/components/schemas/TopPostResponse'
+          type: array
+          title: Posts
+      type: object
+      required:
+      - metric
+      - posts
+      title: TopPostsResponse
+      description: Ответ с топ постами
+    TopUserResponse:
+      properties:
+        user_id:
+          type: integer
+          title: User Id
+        count:
+          type: integer
+          title: Count
+      type: object
+      required:
+      - user_id
+      - count
+      title: TopUserResponse
+      description: Элемент топ пользователя
+    TopUsersResponse:
+      properties:
+        metric:
+          type: string
+          title: Metric
+        users:
+          items:
+            $ref: '#/components/schemas/TopUserResponse'
+          type: array
+          title: Users
+      type: object
+      required:
+      - metric
+      - users
+      title: TopUsersResponse
+      description: Ответ с топ пользователями
     ValidationError:
       properties:
         loc:

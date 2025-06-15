@@ -1,7 +1,18 @@
+import logging
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 from .router import router
 from .config import DATABASE_URL
+
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Включаем логирование для Kafka
+logging.getLogger('kafka').setLevel(logging.INFO)
+logging.getLogger('user_service.app.kafka_producer').setLevel(logging.INFO)
 
 app = FastAPI(title="User Service")
 

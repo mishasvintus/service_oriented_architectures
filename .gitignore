@@ -154,3 +154,5 @@ logs/
 # Temporary files
 *.tmp
 *.temp 
+
+.cursorignore

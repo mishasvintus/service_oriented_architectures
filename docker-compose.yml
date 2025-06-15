@@ -41,6 +41,21 @@ services:
       postgres:
         condition: service_healthy
 
+  statistics_service:
+    build:
+      context: .
+      dockerfile: ./statistics_service/Dockerfile
+    ports:
+      - "50053:50053"
+    restart: always
+    env_file:
+      - ./statistics_service/.env
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
   postgres:
     image: postgres:13
     ports:
@@ -57,6 +72,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "9000:9000" 
+      - "8123:8123" 
+    environment:
+      CLICKHOUSE_DB: analytics
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./scripts/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./scripts/clickhouse/default-user.xml:/etc/clickhouse-server/users.d/default-user.xml
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -114,3 +149,4 @@ services:
 volumes:
   pg_data:
   kafka_data:
+  clickhouse_data:
