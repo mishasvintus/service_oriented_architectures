@@ -1,25 +1,12 @@
-# Основные тестовые зависимости
 pytest==7.4.3
 pytest-dependency==0.5.1
 pytest-asyncio==0.21.1
 pytest-anyio==0.4.0
-
-# HTTP клиенты для тестирования API
 httpx==0.25.2
 requests==2.31.0
-
-# Kafka для тестирования событий
 kafka-python==2.0.2
-
-# FastAPI для тестирования REST API
 fastapi[all]==0.104.1
-
-# gRPC для тестирования gRPC сервисов
 grpcio-tools==1.59.3
 grpcio==1.59.3
-
-# ClickHouse для тестирования Statistics Service
-clickhouse-driver==0.2.6
-
-# Дополнительные утилиты для тестов
+clickhouse-driver==0.2.6так 
 python-dotenv==1.0.0 

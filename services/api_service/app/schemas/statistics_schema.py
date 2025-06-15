@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import List, Literal
-from datetime import datetime
-
 
 class PostStatsResponse(BaseModel):
     """Схема ответа для базовой статистики поста"""

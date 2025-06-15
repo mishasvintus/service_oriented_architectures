@@ -23,6 +23,8 @@ class TestStatisticsServicer(unittest.TestCase):
         self.mock_clickhouse_client = self.clickhouse_patcher.start()
         
         self.servicer = StatisticsService()
+        # Принудительно заменяем clickhouse_client на мок
+        self.servicer.clickhouse_client = self.mock_clickhouse_client
         self.mock_context = Mock()
     
     def tearDown(self):

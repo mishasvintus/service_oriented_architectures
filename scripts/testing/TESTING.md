@@ -93,30 +93,31 @@ python3 -m pytest tests/test_full_e2e_flow.py -v
 │   ├── test_integration.py              # Запуск всех интеграционных тестов
 │   └── test_kafka.py                    # Запуск Kafka тестов
 │
-├── user_service/
-│   ├── unit_tests/                      # 🧪 Unit тесты
-│   │   ├── test_kafka_producer.py       # Kafka producer (мок)
-│   │   ├── test_servicer.py             # gRPC сервис
-│   │   └── ...
-│   └── integrational_tests/             # 🔗 Интеграционные тесты
-│       └── test_integration.py          # gRPC интеграция
-│
-├── post_service/
-│   ├── unit_tests/                      # 🧪 Unit тесты
-│   │   ├── test_kafka_producer.py       # Kafka producer (мок)
-│   │   ├── test_servicer.py             # gRPC сервис
-│   │   ├── test_new_methods.py          # Новые методы
-│   │   └── ...
-│   └── integrational_tests/             # 🔗 Интеграционные тесты
-│       └── test_integration.py          # gRPC интеграция
-│
-├── api_service/
-│   ├── unit_tests/                      # 🧪 Unit тесты
-│   │   └── test_posts_router.py         # FastAPI роутеры (мок)
-│   └── integrational_tests/             # 🔗 Интеграционные тесты
-│       └── test_integration.py          # REST API интеграция
-│
-├── statistics_service/
+├── services/
+│   ├── user_service/
+│   │   ├── unit_tests/                      # 🧪 Unit тесты
+│   │   │   ├── test_kafka_producer.py       # Kafka producer (мок)
+│   │   │   ├── test_servicer.py             # gRPC сервис
+│   │   │   └── ...
+│   │   └── integrational_tests/             # 🔗 Интеграционные тесты
+│   │       └── test_integration.py          # gRPC интеграция
+│   │
+│   ├── post_service/
+│   │   ├── unit_tests/                      # 🧪 Unit тесты
+│   │   │   ├── test_kafka_producer.py       # Kafka producer (мок)
+│   │   │   ├── test_servicer.py             # gRPC сервис
+│   │   │   ├── test_new_methods.py          # Новые методы
+│   │   │   └── ...
+│   │   └── integrational_tests/             # 🔗 Интеграционные тесты
+│   │       └── test_integration.py          # gRPC интеграция
+│   │
+│   ├── api_service/
+│   │   ├── unit_tests/                      # 🧪 Unit тесты
+│   │   │   └── test_posts_router.py         # FastAPI роутеры (мок)
+│   │   └── integrational_tests/             # 🔗 Интеграционные тесты
+│   │       └── test_integration.py          # REST API интеграция
+│   │
+│   └── statistics_service/
 │   ├── unit_tests/                      # 🧪 Unit тесты
 │   │   ├── test_clickhouse_client.py    # ClickHouse клиент (мок)
 │   │   ├── test_kafka_consumer.py       # Kafka consumer (мок)
@@ -229,7 +230,7 @@ python3 -m pytest tests/test_full_e2e_flow.py -v
    ```bash
    scripts/run_tests.sh unit
    # или для конкретного типа тестов:
-   python3 -m pytest user_service/unit_tests/ -v
+   python3 -m pytest services/user_service/unit_tests/ -v
    python3 -m pytest tests/test_kafka_integration.py -v -s
    ```
 

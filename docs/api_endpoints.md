@@ -162,7 +162,7 @@
 
 ### User Service (порт 50052)
 
-**Proto файл:** `user_service/protos/users.proto`
+**Proto файл:** `services/user_service/protos/users.proto`
 
 #### Методы:
 - `GetUser(GetUserRequest) -> UserResponse`
@@ -171,7 +171,7 @@
 
 ### Post Service (порт 50051)
 
-**Proto файл:** `post_service/protos/posts.proto`
+**Proto файл:** `services/post_service/protos/posts.proto`
 
 #### Методы:
 - `CreatePost(CreatePostRequest) -> PostResponse`
@@ -187,7 +187,7 @@
 
 ### Statistics Service (порт 50053)
 
-**Proto файл:** `statistics_service/protos/statistics.proto`
+**Proto файл:** `services/statistics_service/protos/statistics.proto`
 
 #### Методы:
 - `GetPostStats(GetPostStatsRequest) -> GetPostStatsResponse`

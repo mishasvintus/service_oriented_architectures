@@ -16,7 +16,7 @@ import sys
 
 # Добавляем путь к модулям statistics_service для gRPC клиента
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from statistics_service.protos import statistics_pb2, statistics_pb2_grpc
+from services.statistics_service.protos import statistics_pb2, statistics_pb2_grpc
 
 
 class TestFullE2EFlow(unittest.TestCase):

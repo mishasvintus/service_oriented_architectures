@@ -39,9 +39,9 @@ def main():
     
     for service in services:
         print(f"\n🔧 Unit тесты {service}...")
-        success, stdout, stderr = run_command(
-            f"python3 -m pytest {service}/unit_tests/ -v --tb=short"
-        )
+        command = f"python3 -m pytest {service}/unit_tests/ -v --tb=short"
+        print(f"cd services && {command}")
+        success, stdout, stderr = run_command(command, cwd="services")
         
         if success:
             print(f"✅ {service} unit тесты прошли")

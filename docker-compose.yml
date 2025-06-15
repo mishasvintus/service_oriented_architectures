@@ -3,12 +3,12 @@ services:
   api_gateway:
     build:
       context: .
-      dockerfile: ./api_service/Dockerfile
+      dockerfile: ./services/api_service/Dockerfile
     ports:
       - "8000:8000"
     restart: always 
     env_file:
-      - ./api_service/.env
+      - ./services/api_service/.env
     depends_on:
       user_service:
         condition: service_started
@@ -18,12 +18,12 @@ services:
   user_service:
     build:
       context: .
-      dockerfile: ./user_service/Dockerfile
+      dockerfile: ./services/user_service/Dockerfile
     ports:
       - "8001:8001"  
     restart: always  
     env_file:
-      - ./user_service/.env
+      - ./services/user_service/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -31,12 +31,12 @@ services:
   post_service:
     build:
       context: .
-      dockerfile: ./post_service/Dockerfile
+      dockerfile: ./services/post_service/Dockerfile
     ports:
       - "50051:50051"
     restart: always
     env_file:
-      - ./post_service/.env
+      - ./services/post_service/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -44,12 +44,12 @@ services:
   statistics_service:
     build:
       context: .
-      dockerfile: ./statistics_service/Dockerfile
+      dockerfile: ./services/statistics_service/Dockerfile
     ports:
       - "50053:50053"
     restart: always
     env_file:
-      - ./statistics_service/.env
+      - ./services/statistics_service/.env
     depends_on:
       clickhouse:
         condition: service_healthy

@@ -116,13 +116,13 @@ def main():
             "name": "Post Service",
             "port": "50051",
             "protocol": "gRPC",
-            "proto_file": "post_service/protos/posts.proto"
+            "proto_file": "services/post_service/protos/posts.proto"
         },
         {
             "name": "Statistics Service", 
             "port": "50053",
             "protocol": "gRPC",
-            "proto_file": "statistics_service/protos/statistics.proto"
+            "proto_file": "services/statistics_service/protos/statistics.proto"
         }
     ]
     

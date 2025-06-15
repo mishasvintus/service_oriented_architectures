@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from api_service.app.schemas.post_schema import (
+from ..schemas.post_schema import (
     PostCreate, PostOut, PostUpdate, PaginatedPostOut,
     ViewPostResponse, LikePostResponse, CommentCreate, CommentResponse, PaginatedCommentsOut
 )
-from api_service.app.grpc_client import get_posts_stub
-from api_service.protos import posts_pb2, posts_pb2_grpc
+from ..grpc_client import get_posts_stub
+from ..protos import posts_pb2, posts_pb2_grpc
+from ..auth import get_current_user_id
+
 import grpc
 from google.protobuf.json_format import MessageToDict
-from api_service.app.auth import get_current_user_id
+from fastapi import APIRouter, Depends, HTTPException, status
 
 router = APIRouter(prefix="/api/posts", tags=["posts"])
 

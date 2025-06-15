@@ -1,7 +1,7 @@
 import grpc
 import os
 from dotenv import load_dotenv
-from api_service.protos import posts_pb2_grpc, statistics_pb2_grpc
+from .protos import posts_pb2_grpc, statistics_pb2_grpc
 
 load_dotenv()
 

@@ -16,9 +16,18 @@ class TestKafkaConsumerService(unittest.TestCase):
     
     def setUp(self):
         """Настройка тестов"""
-        with patch('statistics_service.app.clickhouse_client.clickhouse_client') as mock_client:
-            self.consumer = KafkaConsumerService()
-            self.mock_clickhouse_client = mock_client
+        # Патчим глобальный clickhouse_client ДО создания consumer
+        self.clickhouse_patcher = patch('statistics_service.app.clickhouse_client.clickhouse_client')
+        self.mock_clickhouse_client = self.clickhouse_patcher.start()
+        
+        # Создаем consumer после патчинга
+        self.consumer = KafkaConsumerService()
+        # Принудительно заменяем clickhouse_client на мок
+        self.consumer.clickhouse_client = self.mock_clickhouse_client
+        
+    def tearDown(self):
+        """Очистка после тестов"""
+        self.clickhouse_patcher.stop()
     
     def test_consumer_initialization(self):
         """Тест инициализации Kafka consumer"""
@@ -36,8 +45,8 @@ class TestKafkaConsumerService(unittest.TestCase):
         self.consumer.process_post_view(event_data)
         
         # Проверяем что вызван метод вставки в ClickHouse
-        self.consumer.clickhouse_client.insert_post_view.assert_called_once()
-        call_args = self.consumer.clickhouse_client.insert_post_view.call_args[0][0]
+        self.mock_clickhouse_client.insert_post_view.assert_called_once()
+        call_args = self.mock_clickhouse_client.insert_post_view.call_args[0][0]
         
         self.assertIsInstance(call_args, PostView)
         self.assertEqual(call_args.post_id, 'test-post-123')
@@ -55,8 +64,8 @@ class TestKafkaConsumerService(unittest.TestCase):
         self.consumer.process_post_like(event_data)
         
         # Проверяем что вызван метод вставки в ClickHouse
-        self.consumer.clickhouse_client.insert_post_like.assert_called_once()
-        call_args = self.consumer.clickhouse_client.insert_post_like.call_args[0][0]
+        self.mock_clickhouse_client.insert_post_like.assert_called_once()
+        call_args = self.mock_clickhouse_client.insert_post_like.call_args[0][0]
         
         self.assertIsInstance(call_args, PostLike)
         self.assertEqual(call_args.post_id, 'test-post-123')
@@ -74,8 +83,8 @@ class TestKafkaConsumerService(unittest.TestCase):
         self.consumer.process_post_comment(event_data)
         
         # Проверяем что вызван метод вставки в ClickHouse
-        self.consumer.clickhouse_client.insert_post_comment.assert_called_once()
-        call_args = self.consumer.clickhouse_client.insert_post_comment.call_args[0][0]
+        self.mock_clickhouse_client.insert_post_comment.assert_called_once()
+        call_args = self.mock_clickhouse_client.insert_post_comment.call_args[0][0]
         
         self.assertIsInstance(call_args, PostComment)
         self.assertEqual(call_args.post_id, 'test-post-123')
@@ -94,7 +103,7 @@ class TestKafkaConsumerService(unittest.TestCase):
         self.consumer.process_message(message)
         
         # Проверяем что был вызван метод обработки просмотра
-        self.consumer.clickhouse_client.insert_post_view.assert_called_once()
+        self.mock_clickhouse_client.insert_post_view.assert_called_once()
     
     def test_process_message_invalid_data(self):
         """Тест обработки сообщения с невалидными данными"""

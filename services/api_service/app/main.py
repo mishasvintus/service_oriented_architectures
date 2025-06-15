@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api_service.app.routers import posts_router, user_proxy_router, statistics_router
+from .routers import posts_router, user_proxy_router, statistics_router
 from dotenv import load_dotenv
 
 load_dotenv()

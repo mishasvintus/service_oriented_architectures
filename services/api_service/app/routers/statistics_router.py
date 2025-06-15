@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Literal
-from api_service.app.schemas.statistics_schema import (
+from ..schemas.statistics_schema import (
     PostStatsResponse, PostDynamicsResponse, TopPostsResponse, TopUsersResponse
 )
-from api_service.app.grpc_client import get_statistics_stub
-from api_service.app.auth import get_current_user_id
-from api_service.protos import statistics_pb2
+from ..grpc_client import get_statistics_stub
+from ..auth import get_current_user_id
+from ..protos import statistics_pb2
 import grpc
 
 router = APIRouter(prefix="/api", tags=["statistics"])

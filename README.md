@@ -87,10 +87,11 @@ scripts/run_tests.sh kafka         # Kafka тесты
 ### Структура проекта
 
 ```
-├── api_service/             # API Gateway (FastAPI)
-├── user_service/            # User Service (FastAPI + gRPC)
-├── post_service/            # Post Service (gRPC)
-├── statistics_service/      # Statistics Service (gRPC + ClickHouse + Kafka)
+├── services/                # Микросервисы
+│   ├── api_service/         # API Gateway (FastAPI)
+│   ├── user_service/        # User Service (FastAPI + gRPC)
+│   ├── post_service/        # Post Service (gRPC)
+│   └── statistics_service/  # Statistics Service (gRPC + ClickHouse + Kafka)
 ├── tests/                   # End-to-End тесты
 ├── scripts/                 # Вспомогательные скрипты
 │   ├── database/            # Скрипты БД

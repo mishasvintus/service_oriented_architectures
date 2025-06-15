@@ -3,7 +3,7 @@ from httpx import AsyncClient
 import os
 from dotenv import load_dotenv
 
-from api_service.app.auth import get_current_user_id
+from ..auth import get_current_user_id
 from fastapi import Depends
 import httpx
 

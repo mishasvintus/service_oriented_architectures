@@ -557,7 +557,7 @@ paths:
   /api/profile:
     get:
       summary: Proxy To User Service
-      operationId: proxy_to_user_service_api_profile_put
+      operationId: proxy_to_user_service_api_profile_delete
       responses:
         '200':
           description: Successful Response
@@ -566,7 +566,7 @@ paths:
               schema: {}
     put:
       summary: Proxy To User Service
-      operationId: proxy_to_user_service_api_profile_put
+      operationId: proxy_to_user_service_api_profile_delete
       responses:
         '200':
           description: Successful Response
@@ -575,7 +575,7 @@ paths:
               schema: {}
     delete:
       summary: Proxy To User Service
-      operationId: proxy_to_user_service_api_profile_put
+      operationId: proxy_to_user_service_api_profile_delete
       responses:
         '200':
           description: Successful Response
@@ -663,19 +663,22 @@ components:
       - success
       - message
       title: CommentResponse
-    DynamicsPointResponse:
+    DynamicsPoint:
       properties:
         date:
           type: string
           title: Date
+          description: Дата в формате YYYY-MM-DD
         count:
           type: integer
+          minimum: 0.0
           title: Count
+          description: Количество событий
       type: object
       required:
       - date
       - count
-      title: DynamicsPointResponse
+      title: DynamicsPoint
       description: Точка данных для динамики
     HTTPValidationError:
       properties:
@@ -779,21 +782,38 @@ components:
         post_id:
           type: string
           title: Post Id
+          description: ID поста
         metric:
           type: string
+          enum:
+          - views
+          - likes
+          - comments
           title: Metric
+          description: Тип метрики
         dynamics:
           items:
-            $ref: '#/components/schemas/DynamicsPointResponse'
+            $ref: '#/components/schemas/DynamicsPoint'
           type: array
           title: Dynamics
+          description: Данные динамики по дням
       type: object
       required:
       - post_id
       - metric
       - dynamics
       title: PostDynamicsResponse
-      description: Ответ с динамикой по посту
+      description: Схема ответа для динамики статистики поста
+      example:
+        dynamics:
+        - count: 10
+          date: '2024-01-01'
+        - count: 15
+          date: '2024-01-02'
+        - count: 20
+          date: '2024-01-03'
+        metric: views
+        post_id: '12345'
     PostOut:
       properties:
         id:
@@ -840,15 +860,22 @@ components:
         post_id:
           type: string
           title: Post Id
+          description: ID поста
         views_count:
           type: integer
+          minimum: 0.0
           title: Views Count
+          description: Количество просмотров
         likes_count:
           type: integer
+          minimum: 0.0
           title: Likes Count
+          description: Количество лайков
         comments_count:
           type: integer
+          minimum: 0.0
           title: Comments Count
+          description: Количество комментариев
       type: object
       required:
       - post_id
@@ -856,7 +883,12 @@ components:
       - likes_count
       - comments_count
       title: PostStatsResponse
-      description: Ответ с базовой статистикой по посту
+      description: Схема ответа для базовой статистики поста
+      example:
+        comments_count: 8
+        likes_count: 25
+        post_id: '12345'
+        views_count: 150
     PostUpdate:
       properties:
         title:
@@ -883,71 +915,102 @@ components:
           title: Tags
       type: object
       title: PostUpdate
-    TopPostResponse:
+    TopPost:
       properties:
         post_id:
           type: string
           title: Post Id
+          description: ID поста
         count:
           type: integer
+          minimum: 0.0
           title: Count
-        title:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Title
+          description: Количество по метрике
       type: object
       required:
       - post_id
       - count
-      title: TopPostResponse
-      description: Элемент топ поста
+      title: TopPost
+      description: Схема для топ поста
     TopPostsResponse:
       properties:
         metric:
           type: string
+          enum:
+          - views
+          - likes
+          - comments
           title: Metric
+          description: Метрика сортировки
         posts:
           items:
-            $ref: '#/components/schemas/TopPostResponse'
+            $ref: '#/components/schemas/TopPost'
           type: array
           title: Posts
+          description: Список топ постов
       type: object
       required:
       - metric
       - posts
       title: TopPostsResponse
-      description: Ответ с топ постами
-    TopUserResponse:
+      description: Схема ответа для топ постов
+      example:
+        metric: views
+        posts:
+        - count: 1500
+          post_id: '12345'
+        - count: 1200
+          post_id: '67890'
+        - count: 800
+          post_id: '11111'
+    TopUser:
       properties:
         user_id:
-          type: integer
+          type: string
           title: User Id
+          description: ID пользователя
         count:
           type: integer
+          minimum: 0.0
           title: Count
+          description: Количество по метрике
       type: object
       required:
       - user_id
       - count
-      title: TopUserResponse
-      description: Элемент топ пользователя
+      title: TopUser
+      description: Схема для топ пользователя
     TopUsersResponse:
       properties:
         metric:
           type: string
+          enum:
+          - views
+          - likes
+          - comments
           title: Metric
+          description: Метрика сортировки
         users:
           items:
-            $ref: '#/components/schemas/TopUserResponse'
+            $ref: '#/components/schemas/TopUser'
           type: array
           title: Users
+          description: Список топ пользователей
       type: object
       required:
       - metric
       - users
       title: TopUsersResponse
-      description: Ответ с топ пользователями
+      description: Схема ответа для топ пользователей
+      example:
+        metric: likes
+        users:
+        - count: 250
+          user_id: '1'
+        - count: 180
+          user_id: '2'
+        - count: 150
+          user_id: '3'
     ValidationError:
       properties:
         loc:

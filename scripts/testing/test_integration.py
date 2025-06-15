@@ -81,10 +81,9 @@ def main():
     
     for service in services:
         print(f"\n🔧 Интеграционные тесты {service}...")
-        # Запускаем все тесты из корня проекта для единообразия
-        success, stdout, stderr = run_command(
-            f"python3 -m pytest {service}/integrational_tests/ -v --tb=short"
-        )
+        command = f"python3 -m pytest {service}/integrational_tests/ -v --tb=short"
+        print(f"cd services && {command}")
+        success, stdout, stderr = run_command(command, cwd="services")
         
         if success:
             print(f"✅ {service} интеграционные тесты прошли")

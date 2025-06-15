@@ -13,7 +13,7 @@ gRPC сервисы используют Protocol Buffers для определ�
 
 - **Протокол**: gRPC
 - **Порт**: 50051
-- **Proto файл**: `post_service/protos/posts.proto`
+- **Proto файл**: `services/post_service/protos/posts.proto`
 
 **Доступные методы:**
 
@@ -34,7 +34,7 @@ gRPC сервисы используют Protocol Buffers для определ�
 
 - **Протокол**: gRPC
 - **Порт**: 50053
-- **Proto файл**: `statistics_service/protos/statistics.proto`
+- **Proto файл**: `services/statistics_service/protos/statistics.proto`
 
 **Доступные методы:**
 

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from api_service.protos import statistics_pb2 as protos_dot_statistics__pb2
+from . import statistics_pb2 as protos_dot_statistics__pb2
 
 GRPC_GENERATED_VERSION = '1.73.0'
 GRPC_VERSION = grpc.__version__

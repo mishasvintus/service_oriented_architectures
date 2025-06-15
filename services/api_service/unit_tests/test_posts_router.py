@@ -1,11 +1,9 @@
 import unittest
-from unittest.mock import Mock, patch, AsyncMock
-import pytest
+from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
-from api_service.app.main import app
-from api_service.app.routers.posts_router import router
-from api_service.app.auth import get_current_user_id
-from api_service.app.grpc_client import get_posts_stub
+from ..app.main import app
+from ..app.auth import get_current_user_id
+from ..app.grpc_client import get_posts_stub
 
 
 class TestPostsRouter(unittest.TestCase):
@@ -36,7 +34,7 @@ class TestPostsRouter(unittest.TestCase):
     def _get_auth_headers(self):
         return {"Authorization": f"Bearer {self.mock_token}"}
     
-    @patch('api_service.app.routers.posts_router.MessageToDict')
+    @patch('services.api_service.app.routers.posts_router.MessageToDict')
     def test_view_post_success(self, mock_message_to_dict):
         """Тест успешного просмотра поста через API Gateway"""
         
@@ -58,7 +56,7 @@ class TestPostsRouter(unittest.TestCase):
         self.assertTrue(data["success"])
         self.assertEqual(data["message"], "Post viewed successfully")
     
-    @patch('api_service.app.routers.posts_router.MessageToDict')
+    @patch('services.api_service.app.routers.posts_router.MessageToDict')
     def test_like_post_success(self, mock_message_to_dict):
         """Тест успешного лайка поста через API Gateway"""
         
@@ -82,7 +80,7 @@ class TestPostsRouter(unittest.TestCase):
         self.assertEqual(data["message"], "Post liked successfully")
         self.assertEqual(data["total_likes"], 5)
     
-    @patch('api_service.app.routers.posts_router.MessageToDict')
+    @patch('services.api_service.app.routers.posts_router.MessageToDict')
     def test_unlike_post_success(self, mock_message_to_dict):
         """Тест успешного убирания лайка через API Gateway"""
         
@@ -106,7 +104,7 @@ class TestPostsRouter(unittest.TestCase):
         self.assertEqual(data["message"], "Post unliked successfully")
         self.assertEqual(data["total_likes"], 3)
     
-    @patch('api_service.app.routers.posts_router.MessageToDict')
+    @patch('services.api_service.app.routers.posts_router.MessageToDict')
     def test_comment_post_success(self, mock_message_to_dict):
         """Тест успешного добавления комментария через API Gateway"""
         
@@ -139,7 +137,7 @@ class TestPostsRouter(unittest.TestCase):
         self.assertEqual(data["message"], "Comment added successfully")
         self.assertEqual(data["comment"]["content"], "Great post!")
     
-    @patch('api_service.app.routers.posts_router.MessageToDict')
+    @patch('services.api_service.app.routers.posts_router.MessageToDict')
     def test_get_post_comments_success(self, mock_message_to_dict):
         """Тест успешного получения комментариев через API Gateway"""
         
