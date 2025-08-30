@@ -1,0 +1,7 @@
+grpcio
+grpcio-tools
+tortoise-orm
+asyncpg
+python-dotenv
+protobuf
+kafka-python 

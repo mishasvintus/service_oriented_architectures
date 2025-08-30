@@ -21,46 +21,51 @@ model {
 
     user_service = container "User Service" {
       description "Управление пользователями и аутентификация"
-      technology "Django, PostgreSQL"
+      technology "Python, FastAPI, gRPC, PostgreSQL"
     }
 
     post_service = container "Post Service" {
-      description "Управление постами и комментариями"
-      technology "Node.js, PostgreSQL"
+      description "Управление постами, комментариями и лайками"
+      technology "Python, gRPC, PostgreSQL"
     }
 
-    stats_service = container "Statistics Service" {
-      description "Подсчет лайков, просмотров, комментариев и предоставление API для статистики"
-      technology "Go, ClickHouse"
+    statistics_service = container "Statistics Service" {
+      description "Сбор и анализ статистики, аналитика"
+      technology "Python, gRPC, ClickHouse"
     }
 
     message_broker = container "Kafka" {
-      description "Брокер сообщений для событий статистики"
+      description "Брокер сообщений для событий между сервисами"
       technology "Apache Kafka"
       style {
         shape queue
       }
     }
 
-    user_db = container "PostgreSQL" {
+    kafka_ui = container "Kafka UI" {
+      description "Веб-интерфейс для мониторинга Kafka"
+      technology "Kafka UI"
+    }
+
+    user_db = container "PostgreSQL (Users)" {
       description "База данных пользователей"
-      technology "Database"
+      technology "PostgreSQL Database"
       style {
         shape cylinder
       }
     }
 
-    post_db = container "PostgreSQL" {
-      description "База данных постов и комментариев"
-      technology "Database"
+    post_db = container "PostgreSQL (Posts)" {
+      description "База данных постов, комментариев и лайков"
+      technology "PostgreSQL Database"
       style {
         shape cylinder
       }
     }
 
-    stats_db = container "ClickHouse" {
-      description "База данных статистики"
-      technology "Database"
+    analytics_db = container "ClickHouse" {
+      description "Аналитическая база данных для статистики и событий"
+      technology "ClickHouse Database"
       style {
         shape cylinder
       }
@@ -71,36 +76,44 @@ model {
     technology "HTTPS"
   }
   
-  social_network.api_gateway -> social_network.user_service "Маршрутизирует" {
-    technology "JSON/HTTPS"
+  social_network.api_gateway -> social_network.user_service "Маршрутизирует запросы пользователей" {
+    technology "gRPC"
   }
   
-  social_network.api_gateway -> social_network.post_service "Маршрутизирует" {
-    technology "JSON/HTTPS"
+  social_network.api_gateway -> social_network.post_service "Маршрутизирует запросы постов" {
+    technology "gRPC"
   }
   
-  social_network.api_gateway -> social_network.stats_service "Запрашивает статистику через API" {
-    technology "JSON/HTTPS"
+  social_network.api_gateway -> social_network.statistics_service "Маршрутизирует запросы статистики" {
+    technology "gRPC"
   }
   
-  social_network.user_service -> social_network.user_db "Читает/Пишет" {
+  social_network.user_service -> social_network.user_db "Читает/Пишет данные пользователей" {
     technology "SQL"
   }
   
-  social_network.post_service -> social_network.post_db "Читает/Пишет" {
+  social_network.post_service -> social_network.post_db "Читает/Пишет посты, комментарии, лайки" {
     technology "SQL"
   }
   
-  social_network.stats_service -> social_network.stats_db "Читает/Пишет" {
+  social_network.statistics_service -> social_network.analytics_db "Читает/Пишет аналитические данные" {
     technology "SQL"
   }
   
-  social_network.post_service -> social_network.message_broker "Публикует события (лайки, комментарии, просмотры)" {
-    technology "Kafka"
+  social_network.user_service -> social_network.message_broker "Публикует события регистрации" {
+    technology "Kafka Producer"
   }
   
-  social_network.message_broker -> social_network.stats_service "Передает события статистики" {
-    technology "Kafka"
+  social_network.post_service -> social_network.message_broker "Публикует события (просмотры, лайки, комментарии)" {
+    technology "Kafka Producer"
+  }
+  
+  social_network.statistics_service -> social_network.message_broker "Потребляет события для аналитики" {
+    technology "Kafka Consumer"
+  }
+  
+  social_network.kafka_ui -> social_network.message_broker "Мониторинг и управление" {
+    technology "Kafka API"
   }
 }
 

@@ -1,118 +1,110 @@
 @startuml SocialNetworkER
 !theme plain
 
-package "User Service" #aliceblue {
-    entity "User" as U #lightblue {
-        * user_id : uuid
+package "User Service Database" #aliceblue {
+    entity "users" as U #lightblue {
+        * id : integer (PK)
         --
-        username : string
-        email : string
-        password_hash : string
+        login : string(50) (unique)
+        email : string(255) (unique)
+        password_hash : string(128)
+        first_name : string(50)
+        last_name : string(50)
+        date_of_birth : date
+        phone : string(20)
         created_at : datetime
         updated_at : datetime
     }
-
-    entity "UserProfile" as UP #lightblue {
-        * profile_id : uuid
-        --
-        user_id : uuid
-        full_name : string
-        bio : text
-        avatar_url : string
-        location : string
-        website : string
-    }
-
-    entity "Session" as US #lightblue {
-        * session_id : uuid
-        --
-        user_id : uuid
-        token : string
-        expires_at : datetime
-        created_at : datetime
-    }
-
-    U::user_id --> UP::user_id
-    U::user_id --> US::user_id
 }
 
-package "Post Service" #honeydew {
-    entity "Post" as P #lightgreen {
-        * post_id : uuid
+package "Post Service Database" #honeydew {
+    entity "posts" as P #lightgreen {
+        * id : uuid (PK)
         --
-        user_id : uuid
-        content : text
-        created_at : datetime
-        updated_at : datetime
-        status : string
-    }
-
-    entity "Comment" as C #lightgreen {
-        * comment_id : uuid
-        --
-        post_id : uuid
-        user_id : uuid
-        content : text
-        created_at : datetime
-        parent_comment_id : uuid <<nullable>>
-    }
-
-    entity "Media" as M #lightgreen {
-        * media_id : uuid
-        --
-        post_id : uuid
-        url : string
-        type : string
+        title : string(255)
         description : text
+        author_id : integer
         created_at : datetime
+        updated_at : datetime
+        is_private : boolean
+        tags : json
     }
 
-    P::post_id --> C::post_id
-    P::post_id --> M::post_id
-    C::parent_comment_id --> C::comment_id
-}
-
-package "Statistics Service" #lightyellow {
-    entity "LikeStat" as LS #yellow {
-        * like_id : uuid
+    entity "post_comments" as C #lightgreen {
+        * id : integer (PK)
         --
-        post_id : uuid
-        user_id : uuid
+        post_id : uuid (FK)
+        user_id : integer
+        content : text
         created_at : datetime
-        reaction_type : string
-        source : string
+        updated_at : datetime
     }
 
-    entity "ViewStat" as VS #yellow {
-        * view_id : uuid
+    entity "post_likes" as L #lightgreen {
+        * id : integer (PK)
         --
-        post_id : uuid
-        user_id : uuid
+        post_id : uuid (FK)
+        user_id : integer
+        liked_at : datetime
+        --
+        unique(post_id, user_id)
+    }
+
+    entity "post_views" as V #lightgreen {
+        * id : integer (PK)
+        --
+        post_id : uuid (FK)
+        user_id : integer
         viewed_at : datetime
-        device_type : string
-        duration : integer
-    }
-
-    entity "CommentStat" as CS #yellow {
-        * stat_id : uuid
         --
-        post_id : uuid
-        user_id : uuid
-        comment_id : uuid
-        created_at : datetime
-        edited_at : datetime
+        unique(post_id, user_id)
     }
 
-    P::post_id --> LS::post_id
-    P::post_id --> VS::post_id
-    P::post_id --> CS::post_id
-    C::comment_id --> CS::comment_id
+    P::id --> C::post_id
+    P::id --> L::post_id
+    P::id --> V::post_id
 }
 
+package "Statistics Service Database (ClickHouse)" #lavender {
+    entity "post_events" as PE #plum {
+        * event_id : string
+        --
+        post_id : string
+        user_id : integer
+        event_type : string
+        event_data : json
+        timestamp : datetime
+        date : date
+    }
 
-U::user_id --> P::user_id
-U::user_id --> C::user_id
-U::user_id --> LS::user_id
-U::user_id --> VS::user_id
+    entity "user_events" as UE #plum {
+        * event_id : string
+        --
+        user_id : integer
+        event_type : string
+        event_data : json
+        timestamp : datetime
+        date : date
+    }
+}
+
+' Cross-service relationships (logical, not enforced by FK)
+U::id ..> P::author_id : "создает посты"
+U::id ..> C::user_id : "пишет комментарии"
+U::id ..> L::user_id : "ставит лайки"
+U::id ..> V::user_id : "просматривает посты"
+
+' Analytics relationships (events flow)
+P::id ..> PE::post_id : "события постов"
+U::id ..> PE::user_id : "пользователь в событиях"
+U::id ..> UE::user_id : "события пользователей"
+
+note right of U : "Tortoise ORM модель\nс базовой информацией\nо пользователе"
+note right of P : "Tortoise ORM модель\nс UUID первичным ключом"
+note right of C : "Комментарии к постам\n(без вложенности)"
+note right of L : "Лайки с ограничением\nуникальности"
+note right of V : "Просмотры постов\nдля аналитики"
+note right of PE : "ClickHouse таблица\nдля событий постов\n(просмотры, лайки, комментарии)"
+note right of UE : "ClickHouse таблица\nдля событий пользователей\n(регистрации, активность)"
 
 @enduml

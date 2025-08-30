@@ -1,0 +1,1047 @@
+openapi: 3.0.3
+info:
+  title: Social Media API
+  description: Объединенная документация всех микросервисов
+  version: 1.0.0
+servers:
+- url: http://localhost:8000
+  description: API Gateway (Development)
+paths:
+  /health:
+    get:
+      summary: Health Check
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/posts/{post_id}/stats:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Stats
+      description: Получение базовой статистики по посту
+      operationId: get_post_stats_api_posts__post_id__stats_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostStatsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/views:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Views Dynamics
+      description: Получение динамики просмотров по посту
+      operationId: get_post_views_dynamics_api_posts__post_id__dynamics_views_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/likes:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Likes Dynamics
+      description: Получение динамики лайков по посту
+      operationId: get_post_likes_dynamics_api_posts__post_id__dynamics_likes_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/dynamics/comments:
+    get:
+      tags:
+      - statistics
+      summary: Get Post Comments Dynamics
+      description: Получение динамики комментариев по посту
+      operationId: get_post_comments_dynamics_api_posts__post_id__dynamics_comments_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          description: Количество дней для анализа
+          default: 30
+          title: Days
+        description: Количество дней для анализа
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDynamicsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/statistics/posts/top:
+    get:
+      tags:
+      - statistics
+      summary: Get Top Posts
+      description: Получение топ постов по метрике
+      operationId: get_top_posts_api_statistics_posts_top_get
+      parameters:
+      - name: metric
+        in: query
+        required: true
+        schema:
+          enum:
+          - views
+          - likes
+          - comments
+          type: string
+          description: Метрика для топа
+          title: Metric
+        description: Метрика для топа
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          description: Количество постов в топе
+          default: 10
+          title: Limit
+        description: Количество постов в топе
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopPostsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/statistics/users/top:
+    get:
+      tags:
+      - statistics
+      summary: Get Top Users
+      description: Получение топ пользователей по метрике
+      operationId: get_top_users_api_statistics_users_top_get
+      parameters:
+      - name: metric
+        in: query
+        required: true
+        schema:
+          enum:
+          - views
+          - likes
+          - comments
+          type: string
+          description: Метрика для топа
+          title: Metric
+        description: Метрика для топа
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          description: Количество пользователей в топе
+          default: 10
+          title: Limit
+        description: Количество пользователей в топе
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUsersResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts:
+    post:
+      tags:
+      - posts
+      summary: Create Post
+      operationId: create_post_api_posts_post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - posts
+      summary: List Posts
+      operationId: list_posts_api_posts_get
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Page Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}:
+    get:
+      tags:
+      - posts
+      summary: Get Post
+      operationId: get_post_api_posts__post_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - posts
+      summary: Update Post
+      operationId: update_post_api_posts__post_id__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - posts
+      summary: Delete Post
+      operationId: delete_post_api_posts__post_id__delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/view:
+    post:
+      tags:
+      - posts
+      summary: View Post
+      operationId: view_post_api_posts__post_id__view_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViewPostResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/like:
+    post:
+      tags:
+      - posts
+      summary: Like Post
+      operationId: like_post_api_posts__post_id__like_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikePostResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - posts
+      summary: Unlike Post
+      operationId: unlike_post_api_posts__post_id__like_delete
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikePostResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/posts/{post_id}/comments:
+    post:
+      tags:
+      - posts
+      summary: Comment Post
+      operationId: comment_post_api_posts__post_id__comments_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - posts
+      summary: Get Post Comments
+      operationId: get_post_comments_api_posts__post_id__comments_get
+      parameters:
+      - name: post_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Post Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Page Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentsOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/profile:
+    get:
+      summary: Proxy To User Service
+      operationId: proxy_to_user_service_api_profile_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    put:
+      summary: Proxy To User Service
+      operationId: proxy_to_user_service_api_profile_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    delete:
+      summary: Proxy To User Service
+      operationId: proxy_to_user_service_api_profile_delete
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/login:
+    post:
+      summary: Proxy To User Service
+      operationId: proxy_to_user_service_api_login_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/register:
+    post:
+      summary: Proxy To User Service
+      operationId: proxy_to_user_service_api_register_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    CommentCreate:
+      properties:
+        content:
+          type: string
+          minLength: 1
+          title: Content
+          description: Comment content cannot be empty
+      type: object
+      required:
+      - content
+      title: CommentCreate
+    CommentOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        post_id:
+          type: string
+          title: Post Id
+        user_id:
+          type: integer
+          title: User Id
+        content:
+          type: string
+          title: Content
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+      type: object
+      required:
+      - id
+      - post_id
+      - user_id
+      - content
+      - created_at
+      - updated_at
+      title: CommentOut
+    CommentResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          type: string
+          title: Message
+        comment:
+          anyOf:
+          - $ref: '#/components/schemas/CommentOut'
+          - type: 'null'
+      type: object
+      required:
+      - success
+      - message
+      title: CommentResponse
+    DynamicsPoint:
+      properties:
+        date:
+          type: string
+          title: Date
+          description: Дата в формате YYYY-MM-DD
+        count:
+          type: integer
+          minimum: 0.0
+          title: Count
+          description: Количество событий
+      type: object
+      required:
+      - date
+      - count
+      title: DynamicsPoint
+      description: Точка данных для динамики
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LikePostResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          type: string
+          title: Message
+        total_likes:
+          type: integer
+          title: Total Likes
+      type: object
+      required:
+      - success
+      - message
+      - total_likes
+      title: LikePostResponse
+    PaginatedCommentsOut:
+      properties:
+        comments:
+          items:
+            $ref: '#/components/schemas/CommentOut'
+          type: array
+          title: Comments
+        total_count:
+          type: integer
+          title: Total Count
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+      type: object
+      required:
+      - comments
+      - total_count
+      - page
+      - page_size
+      title: PaginatedCommentsOut
+    PaginatedPostOut:
+      properties:
+        posts:
+          items:
+            $ref: '#/components/schemas/PostOut'
+          type: array
+          title: Posts
+        total_count:
+          type: integer
+          title: Total Count
+        page:
+          type: integer
+          title: Page
+        page_size:
+          type: integer
+          title: Page Size
+      type: object
+      required:
+      - posts
+      - total_count
+      - page
+      - page_size
+      title: PaginatedPostOut
+    PostCreate:
+      properties:
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        is_private:
+          type: boolean
+          title: Is Private
+          default: false
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+          default: []
+      type: object
+      required:
+      - title
+      - description
+      title: PostCreate
+    PostDynamicsResponse:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+          description: ID поста
+        metric:
+          type: string
+          enum:
+          - views
+          - likes
+          - comments
+          title: Metric
+          description: Тип метрики
+        dynamics:
+          items:
+            $ref: '#/components/schemas/DynamicsPoint'
+          type: array
+          title: Dynamics
+          description: Данные динамики по дням
+      type: object
+      required:
+      - post_id
+      - metric
+      - dynamics
+      title: PostDynamicsResponse
+      description: Схема ответа для динамики статистики поста
+      example:
+        dynamics:
+        - count: 10
+          date: '2024-01-01'
+        - count: 15
+          date: '2024-01-02'
+        - count: 20
+          date: '2024-01-03'
+        metric: views
+        post_id: '12345'
+    PostOut:
+      properties:
+        id:
+          type: string
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        author_id:
+          type: integer
+          title: Author Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+        is_private:
+          type: boolean
+          title: Is Private
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+      type: object
+      required:
+      - id
+      - title
+      - description
+      - author_id
+      - created_at
+      - updated_at
+      - is_private
+      - tags
+      title: PostOut
+    PostStatsResponse:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+          description: ID поста
+        views_count:
+          type: integer
+          minimum: 0.0
+          title: Views Count
+          description: Количество просмотров
+        likes_count:
+          type: integer
+          minimum: 0.0
+          title: Likes Count
+          description: Количество лайков
+        comments_count:
+          type: integer
+          minimum: 0.0
+          title: Comments Count
+          description: Количество комментариев
+      type: object
+      required:
+      - post_id
+      - views_count
+      - likes_count
+      - comments_count
+      title: PostStatsResponse
+      description: Схема ответа для базовой статистики поста
+      example:
+        comments_count: 8
+        likes_count: 25
+        post_id: '12345'
+        views_count: 150
+    PostUpdate:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        is_private:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Private
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+      type: object
+      title: PostUpdate
+    TopPost:
+      properties:
+        post_id:
+          type: string
+          title: Post Id
+          description: ID поста
+        count:
+          type: integer
+          minimum: 0.0
+          title: Count
+          description: Количество по метрике
+      type: object
+      required:
+      - post_id
+      - count
+      title: TopPost
+      description: Схема для топ поста
+    TopPostsResponse:
+      properties:
+        metric:
+          type: string
+          enum:
+          - views
+          - likes
+          - comments
+          title: Metric
+          description: Метрика сортировки
+        posts:
+          items:
+            $ref: '#/components/schemas/TopPost'
+          type: array
+          title: Posts
+          description: Список топ постов
+      type: object
+      required:
+      - metric
+      - posts
+      title: TopPostsResponse
+      description: Схема ответа для топ постов
+      example:
+        metric: views
+        posts:
+        - count: 1500
+          post_id: '12345'
+        - count: 1200
+          post_id: '67890'
+        - count: 800
+          post_id: '11111'
+    TopUser:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+          description: ID пользователя
+        count:
+          type: integer
+          minimum: 0.0
+          title: Count
+          description: Количество по метрике
+      type: object
+      required:
+      - user_id
+      - count
+      title: TopUser
+      description: Схема для топ пользователя
+    TopUsersResponse:
+      properties:
+        metric:
+          type: string
+          enum:
+          - views
+          - likes
+          - comments
+          title: Metric
+          description: Метрика сортировки
+        users:
+          items:
+            $ref: '#/components/schemas/TopUser'
+          type: array
+          title: Users
+          description: Список топ пользователей
+      type: object
+      required:
+      - metric
+      - users
+      title: TopUsersResponse
+      description: Схема ответа для топ пользователей
+      example:
+        metric: likes
+        users:
+        - count: 250
+          user_id: '1'
+        - count: 180
+          user_id: '2'
+        - count: 150
+          user_id: '3'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    ViewPostResponse:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - success
+      - message
+      title: ViewPostResponse

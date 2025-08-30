@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package statistics;
+
+import "google/protobuf/timestamp.proto";
+
+service StatisticsService {
+    // Получение базовой статистики по посту
+    rpc GetPostStats (GetPostStatsRequest) returns (GetPostStatsResponse);
+    
+    // Получение динамики просмотров по посту
+    rpc GetPostViewsDynamics (GetPostDynamicsRequest) returns (GetPostDynamicsResponse);
+    
+    // Получение динамики лайков по посту
+    rpc GetPostLikesDynamics (GetPostDynamicsRequest) returns (GetPostDynamicsResponse);
+    
+    // Получение динамики комментариев по посту
+    rpc GetPostCommentsDynamics (GetPostDynamicsRequest) returns (GetPostDynamicsResponse);
+    
+    // Получение топ 10 постов по метрике
+    rpc GetTopPosts (GetTopPostsRequest) returns (GetTopPostsResponse);
+    
+    // Получение топ 10 пользователей по метрике
+    rpc GetTopUsers (GetTopUsersRequest) returns (GetTopUsersResponse);
+}
+
+// Запрос базовой статистики по посту
+message GetPostStatsRequest {
+    string post_id = 1;
+}
+
+// Ответ с базовой статистикой поста
+message GetPostStatsResponse {
+    string post_id = 1;
+    int64 views_count = 2;
+    int64 likes_count = 3;
+    int64 comments_count = 4;
+}
+
+// Запрос динамики по посту
+message GetPostDynamicsRequest {
+    string post_id = 1;
+    int32 days = 2; // Количество дней для анализа (по умолчанию 30)
+}
+
+// Точка данных динамики
+message DynamicsPoint {
+    string date = 1; // YYYY-MM-DD format
+    int64 count = 2;
+}
+
+// Ответ с динамикой
+message GetPostDynamicsResponse {
+    string post_id = 1;
+    string metric = 2; // views, likes, comments
+    repeated DynamicsPoint dynamics = 3;
+}
+
+// Запрос топ постов
+message GetTopPostsRequest {
+    string metric = 1; // views, likes, comments
+    int32 limit = 2; // По умолчанию 10
+}
+
+// Элемент топ поста
+message TopPost {
+    string post_id = 1;
+    int64 count = 2;
+    string title = 3; // Опционально, если доступно
+}
+
+// Ответ с топ постами
+message GetTopPostsResponse {
+    string metric = 1;
+    repeated TopPost posts = 2;
+}
+
+// Запрос топ пользователей
+message GetTopUsersRequest {
+    string metric = 1; // views, likes, comments
+    int32 limit = 2; // По умолчанию 10
+}
+
+// Элемент топ пользователя
+message TopUser {
+    string user_id = 1;
+    int64 count = 2;
+}
+
+// Ответ с топ пользователями
+message GetTopUsersResponse {
+    string metric = 1;
+    repeated TopUser users = 2;
+} 

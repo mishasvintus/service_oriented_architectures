@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package posts;
+
+import "google/protobuf/timestamp.proto";
+
+service PostService {
+    rpc CreatePost (CreatePostRequest) returns (PostResponse);
+    rpc GetPost (GetPostRequest) returns (PostResponse);
+    rpc UpdatePost (UpdatePostRequest) returns (PostResponse);
+    rpc DeletePost (DeletePostRequest) returns (DeletePostResponse);
+    rpc ListPosts (ListPostsRequest) returns (ListPostsResponse);
+    
+    // Новые методы для задания
+    rpc ViewPost (ViewPostRequest) returns (ViewPostResponse);
+    rpc LikePost (LikePostRequest) returns (LikePostResponse);
+    rpc UnlikePost (UnlikePostRequest) returns (UnlikePostResponse);
+    rpc CommentPost (CommentPostRequest) returns (CommentPostResponse);
+    rpc GetPostComments (GetPostCommentsRequest) returns (GetPostCommentsResponse);
+}
+
+message Post {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    int64 author_id = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+    bool is_private = 7;
+    repeated string tags = 8;
+}
+
+// Запрос на создание поста
+message CreatePostRequest {
+    string title = 1;
+    string description = 2;
+    int64 author_id = 3; // ID пользователя из JWT токена
+    bool is_private = 4;
+    repeated string tags = 5;
+}
+
+// Запрос на получение поста по ID
+message GetPostRequest {
+    string id = 1;
+    int64 requester_id = 2; // ID пользователя, запрашивающего пост
+}
+
+// Запрос на обновление поста
+message UpdatePostRequest {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+    bool is_private = 4;
+    repeated string tags = 5;
+    int64 requester_id = 6; // ID пользователя, обновляющего пост
+}
+
+// Запрос на удаление поста
+message DeletePostRequest {
+    string id = 1;
+    int64 requester_id = 2; // ID пользователя, удаляющего пост
+}
+
+// Ответ, содержащий один пост
+message PostResponse {
+    Post post = 1;
+}
+
+// Запрос на получение списка постов
+message ListPostsRequest {
+    int32 page = 1;
+    int32 page_size = 2;
+}
+
+// Ответ, содержащий список постов
+message ListPostsResponse {
+    repeated Post posts = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+}
+
+// Ответ для операции удаления
+message DeletePostResponse {
+    string message = 1;
+}
+
+// Новые сообщения для задания
+
+// Просмотр поста
+message ViewPostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message ViewPostResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Лайк поста
+message LikePostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message LikePostResponse {
+    bool success = 1;
+    string message = 2;
+    int32 total_likes = 3;
+}
+
+// Убрать лайк
+message UnlikePostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+}
+
+message UnlikePostResponse {
+    bool success = 1;
+    string message = 2;
+    int32 total_likes = 3;
+}
+
+// Комментарий к посту
+message CommentPostRequest {
+    string post_id = 1;
+    int64 user_id = 2;
+    string content = 3;
+}
+
+message PostComment {
+    int32 id = 1;
+    string post_id = 2;
+    int64 user_id = 3;
+    string content = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+}
+
+message CommentPostResponse {
+    bool success = 1;
+    string message = 2;
+    PostComment comment = 3;
+}
+
+// Получение комментариев к посту
+message GetPostCommentsRequest {
+    string post_id = 1;
+    int32 page = 2;
+    int32 page_size = 3;
+}
+
+message GetPostCommentsResponse {
+    repeated PostComment comments = 1;
+    int32 total_count = 2;
+    int32 page = 3;
+    int32 page_size = 4;
+} 
